@@ -179,7 +179,11 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
 .dp-notes{font-size:11px;color:var(--text2);line-height:1.7;border-left:2px solid var(--border);padding-left:10px}
 /* LEGEND */
 .legend{position:fixed;bottom:16px;left:16px;background:var(--surface);border:1px solid var(--border);padding:10px 12px;z-index:50;max-width:200px}
-.legend-title{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px}
+.legend-title{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer}
+.legend-toggle{background:none;border:1px solid var(--border);color:var(--text3);font-size:9px;line-height:1;padding:2px 5px;cursor:pointer;font-family:inherit}
+.legend.collapsed{padding:8px 12px}
+.legend.collapsed .legend-title{margin-bottom:0}
+.legend.collapsed .legend-body{display:none}
 .legend-item{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:10px;color:var(--text2)}
 .legend-swatch{width:12px;height:12px;flex-shrink:0}
 .legend-swatch.dimeo{background:var(--dimeo)}
@@ -272,8 +276,9 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
   </div>
 </div>
 
-<div class="legend">
-  <div class="legend-title">Legend</div>
+<div class="legend" id="legend">
+  <div class="legend-title" onclick="toggleLegend()">Legend<button class="legend-toggle" onclick="event.stopPropagation();toggleLegend()">&minus;</button></div>
+  <div class="legend-body">
   <div class="legend-item"><div class="legend-swatch dimeo"></div>DiMeo / NJ</div>
   <div class="legend-item"><div class="legend-swatch lupert"></div>Lupertazzi / NY</div>
   <div class="legend-item"><div class="legend-swatch other-ny"></div>Other NY Families</div>
@@ -288,6 +293,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
   <hr class="legend-divider">
   <div class="legend-item" style="font-size:9px;color:var(--text3)">— Solid: formal report</div>
   <div class="legend-item" style="font-size:9px;color:var(--text3)">⟡ Glow: bridge node</div>
+  </div>
 </div>
 
 <div class="caveats-bar">
@@ -1027,7 +1033,9 @@ function renderGen() {
 renderOrg();
 
 function toggleLegend() {
-  document.getElementById('legend').classList.toggle('collapsed');
+  const el = document.getElementById('legend');
+  el.classList.toggle('collapsed');
+  el.querySelector('.legend-toggle').textContent = el.classList.contains('collapsed') ? '+' : '−';
 }
 </script>
 </body>
