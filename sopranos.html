@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Sopranos — Organization & Genealogy</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0d0f;
+  --surface:#141416;
+  --surface2:#1c1c1f;
+  --border:#2a2a2e;
+  --dimeo:#4a7fa5;
+  --lupert:#a54a4a;
+  --other-ny:#7a5fa5;
+  --law:#5fa57a;
+  --civilian:#8a8a8a;
+  --dead:#3a3a3a;
+  --informant:#d4a017;
+  --text:#e8e8e8;
+  --text2:#9a9a9a;
+  --text3:#5a5a5a;
+  --accent:#c8a96e;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;overflow:hidden}
+/* HEADER */
+header{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:var(--surface);border-bottom:1px solid var(--border);z-index:100;position:relative}
+.logo{font-family:'Libre Baskerville',serif;font-size:16px;letter-spacing:0.05em;color:var(--accent)}
+.logo span{color:var(--text3);font-style:italic;font-size:13px;margin-left:8px}
+/* TABS */
+.tabs{display:flex;gap:2px}
+.tab{padding:6px 16px;background:transparent;border:1px solid var(--border);color:var(--text2);cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;transition:all 0.15s}
+.tab:hover{color:var(--text);border-color:var(--text3)}
+.tab.active{background:var(--surface2);color:var(--accent);border-color:var(--accent)}
+/* CONTROLS */
+.controls{display:flex;gap:8px;align-items:center}
+.search-wrap{position:relative}
+.search-wrap input{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:5px 10px 5px 28px;font-family:'IBM Plex Mono',monospace;font-size:11px;width:180px;outline:none}
+.search-wrap input:focus{border-color:var(--accent)}
+.search-wrap::before{content:'⌕';position:absolute;left:8px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:14px}
+.btn{padding:5px 10px;background:var(--surface2);border:1px solid var(--border);color:var(--text2);cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;transition:all 0.15s}
+.btn:hover{color:var(--text);border-color:var(--text3)}
+.btn.active{color:var(--accent);border-color:var(--accent)}
+/* MAIN LAYOUT */
+.view{display:none;height:calc(100vh - 49px);overflow:hidden}
+.view.active{display:flex}
+/* ORG VIEW */
+#org-view{flex-direction:column}
+.org-toolbar{display:flex;gap:8px;padding:8px 16px;background:var(--surface);border-bottom:1px solid var(--border);flex-wrap:wrap;align-items:center}
+.filter-label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-right:4px}
+.filter-btn{padding:3px 10px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-size:10px;font-family:'IBM Plex Mono',monospace;letter-spacing:0.06em;transition:all 0.15s}
+.filter-btn:hover{color:var(--text)}
+.filter-btn.active{border-color:currentColor}
+.filter-btn.dimeo.active{color:var(--dimeo)}
+.filter-btn.lupert.active{color:var(--lupert)}
+.filter-btn.other.active{color:var(--other-ny)}
+.filter-btn.law.active{color:var(--law)}
+.filter-btn.dead.active{color:var(--dead);border-color:#555}
+.filter-btn.informant.active{color:var(--informant)}
+.conflict-toggle{margin-left:auto}
+.org-canvas{flex:1;overflow:auto;padding:20px}
+/* FAMILY SECTION */
+.family-section{margin-bottom:32px}
+.family-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;cursor:pointer}
+.family-title{font-family:'Libre Baskerville',serif;font-size:18px;letter-spacing:0.04em}
+.family-badge{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:2px 8px;border:1px solid;letter-spacing:0.1em;text-transform:uppercase}
+.succession-strip{display:flex;align-items:center;gap:0;margin-bottom:20px;overflow-x:auto;padding-bottom:4px}
+.succ-item{display:flex;align-items:center;gap:0;flex-shrink:0}
+.succ-box{background:var(--surface2);border:1px solid var(--border);padding:6px 12px;font-size:10px;font-family:'IBM Plex Mono',monospace}
+.succ-box .s-name{color:var(--text);font-weight:600}
+.succ-box .s-dates{color:var(--text3);font-size:9px;display:block;margin-top:1px}
+.succ-box .s-role{color:var(--accent);font-size:9px;display:block}
+.succ-arrow{color:var(--text3);padding:0 4px;font-size:12px}
+/* ORG TREE */
+.org-tree{display:flex;flex-direction:column;gap:16px}
+.rank-row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}
+.rank-label{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;writing-mode:vertical-rl;transform:rotate(180deg);min-width:20px;align-self:stretch;display:flex;align-items:center;border-right:1px solid var(--border);padding-right:8px;margin-right:4px}
+.rank-nodes{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-start}
+/* CREW BLOCK */
+.crew-block{background:var(--surface);border:1px solid var(--border);padding:10px;border-radius:1px;min-width:160px}
+.crew-header{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+.crew-toggle{font-size:11px;transition:transform 0.2s}
+.crew-toggle.collapsed{transform:rotate(-90deg)}
+.crew-members{display:flex;flex-direction:column;gap:4px}
+.crew-members.collapsed{display:none}
+/* NODE */
+.node{background:var(--surface2);border-left:3px solid var(--border);padding:7px 10px;cursor:pointer;transition:all 0.15s;position:relative}
+.node:hover{background:#222226}
+.node.dimeo{border-left-color:var(--dimeo)}
+.node.lupert{border-left-color:var(--lupert)}
+.node.other-ny{border-left-color:var(--other-ny)}
+.node.law{border-left-color:var(--law)}
+.node.civilian{border-left-color:var(--civilian)}
+.node.dead{opacity:0.45;text-decoration:line-through;text-decoration-color:var(--text3)}
+.node.informant{border-left-color:var(--informant);border:1px solid var(--informant);border-left:3px solid var(--informant)}
+.node.comatose{border-style:dashed}
+.node.imprisoned{opacity:0.7}
+.node.unresolved{border-style:dashed;border-left-style:solid}
+.node.disputed::after{content:'?';position:absolute;top:2px;right:4px;font-size:9px;color:var(--accent);font-family:'IBM Plex Mono',monospace}
+.node.bridge-node{box-shadow:0 0 0 1px var(--accent);outline:1px solid var(--accent)}
+.node-name{font-size:12px;font-weight:500;color:var(--text)}
+.node-nick{font-size:10px;color:var(--accent);font-style:italic}
+.node-role{font-size:10px;color:var(--text2);font-family:'IBM Plex Mono',monospace;margin-top:2px}
+.node-badges{display:flex;gap:4px;margin-top:4px;flex-wrap:wrap}
+.badge{font-size:8px;padding:1px 4px;font-family:'IBM Plex Mono',monospace;letter-spacing:0.06em;text-transform:uppercase;font-weight:600}
+.badge.rat{background:var(--informant);color:#000}
+.badge.dead{background:var(--dead);color:var(--text2)}
+.badge.prison{background:#333;color:var(--text2)}
+.badge.coma{background:#2a2a3a;color:#7070a0}
+.badge.defunct{background:#1a1a1a;color:var(--text3);border:1px solid var(--border)}
+.badge.disputed{background:transparent;border:1px solid var(--accent);color:var(--accent)}
+.node.dimmed{opacity:0.12!important}
+/* CONFLICT LAYER */
+.conflict-layer{display:none}
+.conflict-layer.active{display:block}
+.conflict-bar{background:var(--surface2);border:1px solid #5a3a3a;padding:8px 12px;margin-bottom:6px;cursor:pointer;transition:all 0.15s}
+.conflict-bar:hover{border-color:#8a4a4a}
+.conflict-year{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3)}
+.conflict-title{font-size:12px;color:var(--text);margin-top:2px}
+.conflict-between{font-size:10px;color:var(--lupert);font-family:'IBM Plex Mono',monospace;margin-top:2px}
+/* DEFUNCT SECTION */
+.defunct-section{border:1px solid var(--border);padding:12px;background:var(--surface);margin-top:8px}
+.defunct-title{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px}
+.defunct-grid{display:flex;gap:8px;flex-wrap:wrap}
+.defunct-crew{opacity:0.5;padding:6px 10px;border:1px dashed var(--border)}
+.defunct-crew .dc-name{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--text2)}
+.defunct-crew .dc-members{font-size:9px;color:var(--text3);margin-top:3px;line-height:1.5}
+/* OTHER NY */
+.other-ny-section{background:var(--surface);border:1px solid var(--border);padding:12px;margin-bottom:16px}
+.other-ny-grid{display:flex;gap:8px;flex-wrap:wrap}
+.ny-family{padding:8px;border:1px solid var(--border);min-width:140px}
+.ny-fname{font-family:'Libre Baskerville',serif;font-size:12px;margin-bottom:4px}
+.ny-fmembers{font-size:10px;color:var(--text2);line-height:1.6}
+/* GENEALOGY VIEW */
+#gen-view{flex-direction:row;overflow:hidden}
+.gen-canvas{flex:1;overflow:auto;padding:20px;position:relative}
+.gen-group{margin-bottom:36px;background:var(--surface);border:1px solid var(--border);padding:16px}
+.gen-group-title{font-family:'Libre Baskerville',serif;font-size:14px;margin-bottom:14px;color:var(--accent);border-bottom:1px solid var(--border);padding-bottom:8px}
+.generation{display:flex;flex-direction:column;gap:12px}
+.gen-row{display:flex;gap:0;align-items:flex-start;flex-wrap:wrap;gap:16px}
+.couple{display:flex;align-items:flex-start;gap:0}
+.couple-nodes{display:flex;align-items:center}
+.spouse-line{width:24px;height:1px;background:var(--text3);margin-top:22px;flex-shrink:0}
+.dashed-line{border-top:1px dashed var(--text3);width:24px;margin-top:22px;flex-shrink:0}
+.couple-children{display:flex;flex-direction:column;padding-left:24px;border-left:1px solid var(--border);margin-left:12px;gap:4px}
+.couple-children-label{font-size:9px;font-family:'IBM Plex Mono',monospace;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.08em}
+.children-row{display:flex;gap:8px;flex-wrap:wrap}
+/* DETAIL PANEL */
+.detail-panel{width:300px;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:width 0.2s;flex-shrink:0}
+.detail-panel.hidden{width:0;border-left:none;display:none}
+.detail-inner{padding:16px;overflow-y:auto;flex:1;min-width:300px}
+.detail-close{position:absolute;top:8px;right:8px;background:none;border:none;color:var(--text2);cursor:pointer;font-size:16px;z-index:10}
+.dp-wrap{position:relative}
+.dp-family-stripe{height:3px;margin:-16px -16px 16px -16px}
+.dp-name{font-family:'Libre Baskerville',serif;font-size:20px;line-height:1.2;margin-bottom:4px}
+.dp-nick{font-size:13px;color:var(--accent);font-style:italic;margin-bottom:12px}
+.dp-section{margin-bottom:14px}
+.dp-label{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px}
+.dp-value{font-size:12px;color:var(--text);line-height:1.6}
+.dp-value.mono{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text2)}
+.dp-status{display:inline-flex;align-items:center;gap:6px;padding:3px 8px;border:1px solid;font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.08em}
+.dp-status.alive{border-color:var(--law);color:var(--law)}
+.dp-status.dead{border-color:var(--dead);color:#666}
+.dp-status.imprisoned{border-color:#666;color:#888}
+.dp-status.informant{border-color:var(--informant);color:var(--informant)}
+.dp-status.comatose{border-color:#4a4a6a;color:#7070a0}
+.dp-status.unresolved{border-color:var(--accent);color:var(--accent)}
+.dp-role-history{display:flex;flex-direction:column;gap:4px}
+.dp-role-item{display:flex;gap:8px;font-size:11px}
+.dp-role-item .dates{color:var(--text3);font-family:'IBM Plex Mono',monospace;font-size:10px;min-width:90px}
+.dp-role-item .role{color:var(--text2)}
+.dp-death{background:#1a1010;border:1px solid #3a1a1a;padding:10px;margin-top:4px}
+.dp-death .death-label{font-family:'IBM Plex Mono',monospace;font-size:9px;color:#8a4a4a;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px}
+.dp-death .death-detail{font-size:11px;color:var(--text2);line-height:1.6}
+.dp-dispute{background:#1a1a10;border:1px solid #3a3a1a;padding:8px;margin-top:4px}
+.dp-dispute p{font-size:11px;color:#a0a060;line-height:1.5}
+.dp-notes{font-size:11px;color:var(--text2);line-height:1.7;border-left:2px solid var(--border);padding-left:10px}
+/* LEGEND */
+.legend{position:fixed;bottom:16px;left:16px;background:var(--surface);border:1px solid var(--border);padding:10px 12px;z-index:50;max-width:200px}
+.legend-title{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px}
+.legend-item{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:10px;color:var(--text2)}
+.legend-swatch{width:12px;height:12px;flex-shrink:0}
+.legend-swatch.dimeo{background:var(--dimeo)}
+.legend-swatch.lupert{background:var(--lupert)}
+.legend-swatch.other-ny{background:var(--other-ny)}
+.legend-swatch.law{background:var(--law)}
+.legend-swatch.civilian{background:var(--civilian)}
+.legend-divider{border:none;border-top:1px solid var(--border);margin:6px 0}
+.legend-badge{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:1px 4px;letter-spacing:0.06em;text-transform:uppercase;font-weight:600;flex-shrink:0}
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--surface)}
+::-webkit-scrollbar-thumb{background:var(--border)}
+/* TOOLTIP */
+.tooltip{position:fixed;background:var(--surface2);border:1px solid var(--border);padding:6px 10px;font-size:11px;pointer-events:none;z-index:200;display:none;max-width:220px}
+.tooltip .tt-name{font-weight:600;color:var(--text)}
+.tooltip .tt-role{color:var(--text2);font-family:'IBM Plex Mono',monospace;font-size:10px;margin-top:2px}
+.tooltip .tt-status{color:var(--text3);font-size:10px;margin-top:1px}
+/* CAVEATS */
+.caveats-bar{background:#1a1a10;border-top:1px solid #3a3a1a;padding:6px 16px;font-size:10px;color:#808050;font-family:'IBM Plex Mono',monospace;position:fixed;bottom:0;width:100%;z-index:40;display:flex;align-items:center;gap:8px}
+.caveats-label{color:#a0a050;text-transform:uppercase;font-size:9px;letter-spacing:0.08em;flex-shrink:0}
+.caveat-items{overflow:hidden;white-space:nowrap}
+/* MOBILE */
+@media(max-width:768px){
+  .detail-panel{position:fixed;right:0;top:0;bottom:0;width:100%!important;z-index:300}
+  .detail-panel.hidden{width:0!important;display:none}
+  header{flex-wrap:wrap;gap:8px}
+  .search-wrap input{width:130px}
+  .org-canvas{padding:10px}
+  .legend{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="tooltip" id="tooltip">
+  <div class="tt-name"></div>
+  <div class="tt-role"></div>
+  <div class="tt-status"></div>
+</div>
+
+<header>
+  <div class="logo">The Sopranos <span>Organizational & Genealogical Reference</span></div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchView('org')">I. Organization</button>
+    <button class="tab" onclick="switchView('gen')">II. Genealogy</button>
+  </div>
+  <div class="controls">
+    <div class="search-wrap"><input type="text" id="search-input" placeholder="Search names..." oninput="handleSearch(this.value)"></div>
+    <button class="btn" onclick="resetView()">Reset</button>
+  </div>
+</header>
+
+<!-- ORG VIEW -->
+<div class="view active" id="org-view">
+  <div style="display:flex;flex-direction:column;flex:1;overflow:hidden">
+    <div class="org-toolbar">
+      <span class="filter-label">Family:</span>
+      <button class="filter-btn dimeo active" onclick="toggleFilter('dimeo',this)">DiMeo / NJ</button>
+      <button class="filter-btn lupert active" onclick="toggleFilter('lupert',this)">Lupertazzi / NY</button>
+      <button class="filter-btn other active" onclick="toggleFilter('other',this)">Other NY</button>
+      <button class="filter-btn law active" onclick="toggleFilter('law',this)">Law Enforcement</button>
+      <span class="filter-label" style="margin-left:12px">Status:</span>
+      <button class="filter-btn dead" onclick="toggleStatusFilter('dead',this)">Dead Only</button>
+      <button class="filter-btn informant" onclick="toggleStatusFilter('informant',this)">Informants</button>
+      <button class="conflict-toggle btn" onclick="toggleConflicts(this)">Conflicts ▾</button>
+    </div>
+    <div class="org-canvas" id="org-canvas">
+      <!-- Content injected by JS -->
+    </div>
+  </div>
+  <div class="detail-panel hidden" id="org-detail">
+    <div class="detail-inner dp-wrap">
+      <button class="detail-close" onclick="closeDetail('org-detail')">✕</button>
+      <div id="org-detail-content"></div>
+    </div>
+  </div>
+</div>
+
+<!-- GEN VIEW -->
+<div class="view" id="gen-view">
+  <div class="gen-canvas" id="gen-canvas">
+    <!-- Content injected by JS -->
+  </div>
+  <div class="detail-panel hidden" id="gen-detail">
+    <div class="detail-inner dp-wrap">
+      <button class="detail-close" onclick="closeDetail('gen-detail')">✕</button>
+      <div id="gen-detail-content"></div>
+    </div>
+  </div>
+</div>
+
+<div class="legend">
+  <div class="legend-title">Legend</div>
+  <div class="legend-item"><div class="legend-swatch dimeo"></div>DiMeo / NJ</div>
+  <div class="legend-item"><div class="legend-swatch lupert"></div>Lupertazzi / NY</div>
+  <div class="legend-item"><div class="legend-swatch other-ny"></div>Other NY Families</div>
+  <div class="legend-item"><div class="legend-swatch law"></div>Law Enforcement</div>
+  <div class="legend-item"><div class="legend-swatch civilian"></div>Civilian</div>
+  <hr class="legend-divider">
+  <div class="legend-item"><span class="legend-badge rat">RAT</span>Informant</div>
+  <div class="legend-item"><span class="legend-badge prison">▪ IN</span>Imprisoned</div>
+  <div class="legend-item"><span class="legend-badge coma" style="background:#2a2a3a;color:#7070a0">COM</span>Comatose</div>
+  <div class="legend-item"><span class="legend-badge defunct">DEF</span>Defunct crew</div>
+  <div class="legend-item"><span class="legend-badge disputed" style="border:1px solid #c8a96e;color:#c8a96e">?</span>Disputed</div>
+  <hr class="legend-divider">
+  <div class="legend-item" style="font-size:9px;color:var(--text3)">— Solid: formal report</div>
+  <div class="legend-item" style="font-size:9px;color:var(--text3)">⟡ Glow: bridge node</div>
+</div>
+
+<div class="caveats-bar">
+  <span class="caveats-label">⚠ Caveats:</span>
+  <span class="caveat-items">Tony's fate is deliberately unresolved (cut to black) · Paulie's final rank disputed (capo vs. underboss) · Silvio's death only implied — never shown on screen · Furio's fate in Italy unconfirmed · Final Lupertazzi boss unstated (likely DeConcini) · Johnny Boy's name disputed (gravestone: "John Francis Soprano") · In-universe dates are fan reconstructions except aired-episode dates · Some crew assignments shift across seasons</span>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// DATA
+// ─────────────────────────────────────────────
+const NODES = [
+  // DiMeo / Soprano Family
+  {id:"ercole-dimeo",name:"Ercole DiMeo",nickname:"Old Man Eckley / The Boot",family:"dimeo",crew:null,role:"Boss (imprisoned)",roleHistory:[{role:"Founder/Boss",from:"~1950s",to:"1995"},{role:"Nominal Boss (imprisoned)",from:"1995",to:"end"}],status:"imprisoned",death:null,disputed:false,bridge:false,notes:"Arrested 1995, federal life sentence in Springfield, Missouri. Never appears on screen. The family retains his name throughout."},
+  {id:"junior-soprano",name:"Corrado Soprano",nickname:"Junior",family:"dimeo",crew:"junior-crew",role:"Official Boss / Figurehead",roleHistory:[{role:"Capo",from:"1970s",to:"1999"},{role:"Official Boss",from:"1999",to:"2006"},{role:"Institutionalized",from:"2006",to:"end"}],status:"alive",death:null,disputed:false,bridge:false,notes:"Intended as figurehead while Tony ran the family. Indicted 1999; house arrest. Shot Tony in April 2006 in a dementia episode, confusing him with 'Little Pussy' Malanga. Confined to Wyckoff Psychiatric Center. Broke and severely demented at series end."},
+  {id:"tony-soprano",name:"Anthony Soprano",nickname:"Tony",family:"dimeo",crew:"tony-crew",role:"De facto Boss → Boss",roleHistory:[{role:"Soldier/Associate",from:"1980s",to:"1998"},{role:"Acting Capo",from:"1998",to:"1999"},{role:"De facto Street Boss",from:"1999",to:"2006"},{role:"Full Boss",from:"2006",to:"end"}],status:"unresolved",death:null,disputed:true,bridge:false,disputeNote:"Fate deliberately unresolved in the finale 'Made in America' (S6E21). The famous cut-to-black ends the series ambiguously.",notes:"Panic attacks led to psychiatric treatment with Dr. Melfi. De facto ran the family while Junior served as figurehead. Full boss ~2006. Killed Christopher in S6E18."},
+  {id:"silvio-dante",name:"Silvio Dante",nickname:"Sil",family:"dimeo",crew:"tony-crew",role:"Consigliere",roleHistory:[{role:"Soldier",from:"1980s",to:"1999"},{role:"Consigliere",from:"1999",to:"2007"},{role:"Acting Boss",from:"April",to:"Aug 2006"}],status:"comatose",death:null,disputed:true,bridge:false,disputeNote:"Death only implied. Left in a coma after 'The Blue Comet' attack. Never confirmed dead on screen.",notes:"Tony's closest confidant. Shot and left comatose by Lupertazzi hitmen in The Blue Comet. Briefly acting boss while Tony was in a coma (April–Aug 2006)."},
+  {id:"bobby-baccalieri",name:"Robert Baccalieri Jr.",nickname:"Bobby Bacala",family:"dimeo",crew:"junior-crew",role:"Acting Underboss",roleHistory:[{role:"Soldier",from:"1990s",to:"2002"},{role:"Acting Capo (Junior crew)",from:"2002",to:"2007"},{role:"Acting Underboss",from:"2007",to:"2007"}],status:"dead",death:{killer:"Lupertazzi hitmen (Phil's orders)",method:"Shot",episode:"The Blue Comet (S6E20)",date:"Dec 2007"},disputed:false,bridge:true,notes:"Bobby Sr. was a veteran DiMeo hitman. Bobby Jr. married Janice Soprano (2003), making him Tony's brother-in-law. Killed buying a Blue Comet model train set."},
+  {id:"paulie-gualtieri",name:"Paul Gualtieri",nickname:"Paulie Walnuts",family:"dimeo",crew:"tony-crew",role:"Capo / De facto #2",roleHistory:[{role:"Soldier",from:"1970s",to:"2000"},{role:"Capo (Gualtieri crew)",from:"2000",to:"end"}],status:"alive",death:null,disputed:true,bridge:false,disputeNote:"Final rank disputed — Tony's finale offer is the Aprile crew capo role, but many sources call him de facto underboss/acting #2.",notes:"Loyal but volatile. Jailed briefly 2002 on a gun charge. Had Christopher act as capo during his absence. Longest-serving active capo at series end."},
+  {id:"christopher-moltisanti",name:"Christopher Moltisanti",nickname:"Chris / Chrissie",family:"dimeo",crew:"tony-crew",role:"Capo",roleHistory:[{role:"Associate",from:"1990s",to:"1999"},{role:"Acting Capo",from:"Sept 2002",to:"late 2002"},{role:"Capo",from:"~2005",to:"2007"}],status:"dead",death:{killer:"Tony Soprano",method:"Suffocated (nose pinched after car crash)",episode:"Kennedy and Heidi (S6E18)",date:"May 2007"},disputed:true,bridge:true,disputeNote:"Exact rank disputed — canonically capo, but some sources loosely call him soldier. Relationship to Tony runs through Carmela/Dickie and Tony B., not direct blood.",notes:"Tony's surrogate nephew. Struggled with heroin addiction throughout. Engaged to Adriana La Cerva, who was killed after her informant status was revealed. Relapsed heroin use led to the car crash that ended with Tony suffocating him."},
+  {id:"big-pussy",name:"Salvatore Bonpensiero",nickname:"Big Pussy / Pussy",family:"dimeo",crew:"tony-crew",role:"Soldier / FBI Informant",roleHistory:[{role:"Soldier",from:"1980s",to:"2000"}],status:"dead",death:{killer:"Tony Soprano, Silvio Dante, Paulie Gualtieri",method:"Shot multiple times; body dumped at sea",episode:"Funhouse (S2E13)",date:"2000"},disputed:false,bridge:false,notes:"One of Tony's closest friends. Flipped after a federal drug arrest. Handler: Skip Lipari. Executed on Tony's boat after Tony, Silvio, and Paulie confronted him."},
+  {id:"patsy-parisi",name:"Patrick Parisi Sr.",nickname:"Patsy",family:"dimeo",crew:"tony-crew",role:"Soldier / Accountant",roleHistory:[{role:"Soldier",from:"1980s",to:"end"}],status:"alive",death:null,disputed:false,bridge:false,notes:"Son Patrick Parisi Jr. is engaged to Meadow Soprano at series end."},
+  {id:"benny-fazio",name:"Benny Fazio",nickname:null,family:"dimeo",crew:"tony-crew",role:"Soldier",roleHistory:[{role:"Soldier",from:"late 1990s",to:"end"}],status:"alive",death:null,disputed:false,bridge:false,notes:"Active soldier at series end."},
+  {id:"hesh-rabkin",name:"Herman Rabkin",nickname:"Hesh",family:"civilian",crew:null,role:"Associate / Adviser",roleHistory:[{role:"Associate/Loan shark",from:"1960s",to:"end"}],status:"alive",death:null,disputed:false,bridge:false,notes:"Jewish associate. Not Italian, never a made man. Friend of Johnny Boy Soprano. Served as unofficial consigliere and loan shark. Alive at series end."},
+  {id:"furio-giunta",name:"Furio Giunta",nickname:null,family:"dimeo",crew:"tony-crew",role:"Soldier",roleHistory:[{role:"Soldier (imported from Naples)",from:"1999",to:"2002"}],status:"left",death:null,disputed:true,bridge:false,disputeNote:"Fate in Italy unknown. Tony implies he ordered Furio killed, but unconfirmed. Only major character to leave the series without being killed.",notes:"Imported from the Zucca/Vittorio Camorra of Naples. Fled to Italy 2002 after developing romantic feelings for Carmela. Tony later implies he arranged his death but this is never confirmed."},
+  {id:"burt-gervasi",name:"Burt Gervasi",nickname:null,family:"dimeo",crew:"tony-crew",role:"Soldier",roleHistory:[{role:"Soldier",from:"1990s",to:"2007"}],status:"dead",death:{killer:"Silvio Dante",method:"Garroted",episode:"The Blue Comet (S6E20)",date:"Dec 2007"},disputed:false,bridge:false,notes:"Killed by Silvio for siding with New York during the final war."},
+  {id:"little-paulie",name:"Jason Germani",nickname:"Little Paulie",family:"dimeo",crew:"tony-crew",role:"Soldier",roleHistory:[{role:"Soldier",from:"late 1990s",to:"end"}],status:"alive",death:null,disputed:false,bridge:false,notes:""},
+  {id:"walden-belfiore",name:"Walden Belfiore",nickname:null,family:"dimeo",crew:"altieri-crew",role:"Soldier",roleHistory:[{role:"Soldier",from:"mid 2000s",to:"end"}],status:"alive",death:null,disputed:false,bridge:false,notes:"Shot Phil Leotardo in the head in the finale, after which Phil's head was crushed by his own rolling SUV."},
+  {id:"adriana",name:"Adriana La Cerva",nickname:"Ade",family:"dimeo",crew:null,role:"Associate / FBI Informant",roleHistory:[{role:"Associate (Christopher's fiancée)",from:"1990s",to:"2004"}],status:"dead",death:{killer:"Silvio Dante",method:"Shot in the woods",episode:"Long Term Parking (S5E12)",date:"2004"},disputed:false,bridge:false,notes:"Coerced by FBI. Undercover agent Deborah Ciccerone befriended her; later handler Robyn Sanseverino. Told Christopher, who told Tony. Silvio drove her to the woods and shot her. Niece of Richie Aprile and Jackie Aprile Sr. (her mother Liz is their sister)."},
+  {id:"eugene-pontecorvo",name:"Eugene Pontecorvo",nickname:null,family:"dimeo",crew:"aprile-crew",role:"Soldier / FBI Informant",roleHistory:[{role:"Soldier",from:"1990s",to:"2006"}],status:"dead",death:{killer:"Suicide",method:"Hanged himself in his basement",episode:"Members Only (S6E1)",date:"April 2006"},disputed:false,bridge:false,notes:"Secret FBI informant. Hanged himself after both Tony and the FBI refused to let him retire to Florida despite a ~$2 million inheritance."},
+  {id:"ray-curto",name:"Raymond Curto",nickname:"Buffalo Ray",family:"dimeo",crew:"curto-crew",role:"Capo / FBI Informant",roleHistory:[{role:"Capo",from:"1980s",to:"2006"}],status:"dead",death:{killer:"Natural causes (stroke)",method:"Died of a stroke in FBI agent's car",episode:"Members Only (S6E1)",date:"April 2006"},disputed:false,bridge:false,notes:"Long-time secret FBI informant since ~early Season 3. Never discovered. Died of a stroke in Agent Robyn Sanseverino's car. Handler: Robyn Sanseverino."},
+  {id:"jimmy-altieri",name:"Jimmy Altieri",nickname:null,family:"dimeo",crew:"altieri-crew",role:"Capo / FBI Informant",roleHistory:[{role:"Capo",from:"1990s",to:"1999"}],status:"dead",death:{killer:"Silvio Dante (Christopher Moltisanti lured him)",method:"Shot in the head; rat left in his mouth",episode:"Season 1",date:"1999"},disputed:false,bridge:false,notes:"Informant. Lured by Christopher, shot in the head by Silvio on Tony's orders. A rat was left in his mouth as a message."},
+  {id:"febby-petrulio",name:"Fabian Petrulio",nickname:"Febby",family:"dimeo",crew:null,role:"Former soldier / Witness protection informant",roleHistory:[{role:"Former DiMeo soldier",from:"1980s",to:"1992"},{role:"Witness protection",from:"1992",to:"1999"}],status:"dead",death:{killer:"Tony Soprano",method:"Strangled",episode:"College (S1E5)",date:"1999"},disputed:false,bridge:false,notes:"Former soldier turned witness protection informant. Tony strangled him during a college visit with Meadow."},
+  {id:"carlo-gervasi",name:"Carlo Gervasi",nickname:null,family:"dimeo",crew:"aprile-crew",role:"Capo / FBI Informant",roleHistory:[{role:"Soldier",from:"1990s",to:"2006"},{role:"Capo (Aprile crew)",from:"2006",to:"end"}],status:"alive",death:null,disputed:false,bridge:false,notes:"Flipped after his son Jason was arrested on drug charges. Testifying before a grand jury at series end — imminent indictments against Tony."},
+  {id:"richie-aprile",name:"Richard Aprile",nickname:"Richie",family:"dimeo",crew:"aprile-crew",role:"Capo",roleHistory:[{role:"Capo",from:"1999",to:"2000"}],status:"dead",death:{killer:"Janice Soprano",method:"Shot during domestic dispute",episode:"The Knight in White Satin Armor (S2E12)",date:"2000"},disputed:false,bridge:false,notes:"Returned from prison 1999. Engaged to Janice Soprano. Shot and killed by Janice during an argument."},
+  {id:"gigi-cestone",name:"Gigi Cestone",nickname:null,family:"dimeo",crew:"aprile-crew",role:"Capo",roleHistory:[{role:"Capo (Aprile crew)",from:"2000",to:"2001"}],status:"dead",death:{killer:"Natural causes (heart attack)",method:"Died of a heart attack",episode:"Season 3",date:"Nov 25, 2000 (approx.)"},disputed:false,bridge:false,notes:"Replaced Richie Aprile as capo. Died of a heart attack sitting on the toilet in the Bing. Tony described it as 'the most dignified thing he ever did.'"},
+  {id:"ralph-cifaretto",name:"Ralph Cifaretto",nickname:"Ralphie",family:"dimeo",crew:"aprile-crew",role:"Capo",roleHistory:[{role:"Acting Capo",from:"2000",to:"2001"},{role:"Capo",from:"2001",to:"2003"}],status:"dead",death:{killer:"Tony Soprano",method:"Beaten and strangled (head left in bowling bag)",episode:"Whoever Did This (S4E9)",date:"Feb 22, 2003 (approx.)"},disputed:false,bridge:false,notes:"Tony suspected Ralph burned down the Pie-O-My stable to collect insurance money. Killed Ralph and dismembered him with Christopher's help. Ralph had also ordered Jackie Jr.'s murder."},
+  {id:"vito-spatafore",name:"Vito Spatafore",nickname:null,family:"dimeo",crew:"aprile-crew",role:"Capo",roleHistory:[{role:"Soldier",from:"1990s",to:"2003"},{role:"Capo",from:"2003",to:"2006"}],status:"dead",death:{killer:"Phil Leotardo's men",method:"Beaten to death with pool cues",episode:"Cold Stones (S6E11)",date:"Nov 2006 (approx.)"},disputed:false,bridge:true,notes:"Outed as gay; fled to New Hampshire. Phil Leotardo (his wife Marie's cousin) had him killed before Tony could resolve it internally. Bridge node: Vito's wife Marie is Phil Leotardo's second cousin."},
+  {id:"jackie-aprile-sr",name:"Giacomo Aprile Sr.",nickname:"Jackie",family:"dimeo",crew:null,role:"Acting Boss",roleHistory:[{role:"Capo",from:"1980s",to:"1995"},{role:"Acting Boss",from:"1995",to:"1998"}],status:"dead",death:{killer:"Intestinal cancer",method:"Died of cancer",episode:"Season 1",date:"Sept 1998 (approx.)"},disputed:false,bridge:false,notes:"Called himself 'acting boss' out of respect for the imprisoned Don DiMeo. Well-respected; his death created a power vacuum."},
+  {id:"jackie-aprile-jr",name:"Giacomo Aprile Jr.",nickname:"Jackie Jr.",family:"dimeo",crew:null,role:"Associate",roleHistory:[{role:"Associate",from:"2000",to:"2001"}],status:"dead",death:{killer:"Vito Spatafore (Ralph's order)",method:"Shot",episode:"To Save Us All from Satan's Power (S3E10)",date:"2001 (approx.)"},disputed:false,bridge:false,notes:"Son of Jackie Aprile Sr. Briefly dated Meadow Soprano. Attempted to rob a card game; Ralph ordered his death."},
+  {id:"beppy-sasso",name:"Joseph Sasso",nickname:"Beppy",family:"dimeo",crew:"junior-crew",role:"Underboss",roleHistory:[{role:"Underboss (under Junior)",from:"1999",to:"~2000"}],status:"imprisoned",death:null,disputed:false,bridge:false,notes:"Underboss under Junior; imprisoned."},
+  {id:"mikey-palmice",name:"Michael Palmice",nickname:"Mikey Grab Bag",family:"dimeo",crew:"junior-crew",role:"Consigliere/Enforcer",roleHistory:[{role:"Consigliere/Enforcer (under Junior)",from:"1999",to:"1999"}],status:"dead",death:{killer:"Christopher Moltisanti and Paulie Gualtieri",method:"Shot while jogging",episode:"Season 1",date:"1999"},disputed:false,bridge:false,notes:"Junior's consigliere/enforcer. Conspired to kill Tony. Murdered on Tony's orders while jogging."},
+  {id:"philly-parisi",name:"Philip Parisi",nickname:"Philly Spoons",family:"dimeo",crew:"junior-crew",role:"Capo",roleHistory:[{role:"Capo (Junior crew)",from:"1998",to:"1999"}],status:"dead",death:{killer:"Gigi Cestone (Tony's orders)",method:"Shot",episode:"Season 1",date:"1998–1999"},disputed:false,bridge:false,notes:"Replaced Junior as capo of the Junior crew briefly."},
+  {id:"larry-barese",name:"Lorenzo Barese",nickname:"Larry Boy",family:"dimeo",crew:"barese-crew",role:"Capo",roleHistory:[{role:"Capo (Barese crew)",from:"1990s",to:"1999"}],status:"imprisoned",death:null,disputed:false,bridge:false,notes:"Indicted and imprisoned 1999. Later reportedly a cooperating informant per secondary sources."},
+  {id:"albert-barese",name:"Albert Barese",nickname:"Ally Boy",family:"dimeo",crew:"barese-crew",role:"Acting Capo",roleHistory:[{role:"Acting Capo",from:"1999",to:"~2004"}],status:"alive",death:null,disputed:true,bridge:false,disputeNote:"Character disappears early Season 5. Fate never mentioned on screen.",notes:"Ran the Barese crew while Larry was imprisoned."},
+  {id:"feech-la-manna",name:"Michele La Manna",nickname:"Feech",family:"dimeo",crew:"la-manna-crew",role:"Capo",roleHistory:[{role:"Capo",from:"1970s",to:"1984"},{role:"Capo (returned)",from:"2004",to:"2004"}],status:"imprisoned",death:null,disputed:false,bridge:false,notes:"Old-school capo. Imprisoned 1984. Released 2004. Tony framed him for a parole violation via planted stolen TVs; returned to prison for life."},
+  {id:"matthew-bevilaqua",name:"Matthew Bevilaqua",nickname:null,family:"dimeo",crew:"tony-crew",role:"Associate",roleHistory:[{role:"Associate",from:"1999",to:"2000"}],status:"dead",death:{killer:"Tony Soprano",method:"Shot (executed)",episode:"Season 2",date:"2000"},disputed:false,bridge:false,notes:"Shot Christopher in a botched hit. Executed by Tony."},
+  {id:"sean-gismonte",name:"Sean Gismonte",nickname:null,family:"dimeo",crew:"tony-crew",role:"Associate",roleHistory:[{role:"Associate",from:"1999",to:"2000"}],status:"dead",death:{killer:"Christopher Moltisanti",method:"Shot in self-defense",episode:"Season 2",date:"2000"},disputed:false,bridge:false,notes:"Partnered with Matthew Bevilaqua in the attempted hit on Christopher. Shot by Christopher."},
+  {id:"brendan-filone",name:"Brendan Filone",nickname:null,family:"dimeo",crew:"tony-crew",role:"Associate",roleHistory:[{role:"Associate",from:"1999",to:"1999"}],status:"dead",death:{killer:"Mikey Palmice",method:"Shot through the eye",episode:"Season 1",date:"1999"},disputed:false,bridge:false,notes:"Close friend of Christopher. Killed by Junior's men as a message to Tony."},
+
+  // Lupertazzi Family
+  {id:"carmine-sr",name:"Carmine Lupertazzi Sr.",nickname:"Carmine",family:"lupert",crew:null,role:"Boss",roleHistory:[{role:"Caporegime under Luciano",from:"1930s",to:"1950s"},{role:"Boss",from:"~1950s",to:"March 2004"}],status:"dead",death:{killer:"Natural causes (stroke)",method:"Stroke",episode:"Season 4",date:"March 2004"},disputed:false,bridge:false,notes:"Ran the family from the Averna Social Club, Brooklyn. Famously dismissed the DiMeo family: 'They're a glorified crew.' His death triggered the succession war."},
+  {id:"johnny-sack",name:"John Sacrimoni",nickname:"Johnny Sack",family:"lupert",crew:null,role:"Underboss → Boss",roleHistory:[{role:"Underboss",from:"~1996",to:"March 2004"},{role:"Boss",from:"March 2004",to:"Dec 2004"},{role:"Imprisoned (boss nominally)",from:"Dec 2004",to:"removal"},{role:"Removed",from:"2006",to:"2007"}],status:"dead",death:{killer:"Lung cancer",method:"Died in prison hospital",episode:"Stage 5 (S6E14)",date:"April 2007"},disputed:false,bridge:false,notes:"Arrested Dec 20, 2004. Pleaded guilty to 47 RICO predicates, admitted LCN membership, breaking omertà. Sentenced to 15 years + $4.1 million fine. Humiliated at his daughter Allegra's wedding. Died of small-cell lung cancer with family at his side."},
+  {id:"phil-leotardo",name:"Philip Leotardo",nickname:"Phil / Old Man",family:"lupert",crew:"leotardo-crew",role:"Capo → Underboss → Boss",roleHistory:[{role:"Capo",from:"1980s",to:"2004"},{role:"Underboss",from:"2004",to:"Dec 2004"},{role:"Acting Boss",from:"Dec 2004",to:"Sept 2007"},{role:"Boss",from:"2007",to:"Dec 2007"}],status:"dead",death:{killer:"Walden Belfiore (Tony's order)",method:"Shot in the head; head crushed by his own rolling SUV",episode:"Made in America (S6E21)",date:"Dec 2007"},disputed:false,bridge:true,notes:"Spent 20 years in prison (1980–1999). Bitter about the lost years. Ordered the final war hits on Tony, Silvio, and Bobby. His wife's cousin Vito Spatafore's homosexuality enraged him. Killed just before the finale's final scene."},
+  {id:"butch-deconcini",name:"Butch DeConcini",nickname:"Butch / The Little Guy",family:"lupert",crew:"deconcini-crew",role:"Underboss / Likely Final Boss",roleHistory:[{role:"Capo",from:"1990s",to:"Sept 2007"},{role:"Underboss",from:"Sept 2007",to:"Dec 2007"},{role:"Likely successor boss",from:"Dec 2007",to:"?"}],status:"alive",death:null,disputed:true,bridge:false,disputeNote:"Final Lupertazzi boss is unstated in canon. DeConcini is the most likely successor. Little Carmine declined the position.",notes:"Allowed Tony to kill Phil. Likely de facto boss at series end."},
+  {id:"little-carmine",name:"Carmine Lupertazzi Jr.",nickname:"Little Carmine",family:"lupert",crew:"miami-crew",role:"Miami Crew Capo / Succession Claimant",roleHistory:[{role:"Capo (Miami crew)",from:"1990s",to:"end"}],status:"alive",death:null,disputed:false,bridge:false,notes:"Claimed the boss seat after his father's death; lost the succession war to Johnny Sack. Brokered the final peace with George Paglieri that allowed Phil's murder. Declined the boss position."},
+  {id:"doc-santoro",name:"Faustino Santoro",nickname:"Doc",family:"lupert",crew:null,role:"Acting Boss (briefly)",roleHistory:[{role:"Acting Boss/de facto boss",from:"2007",to:"2007"}],status:"dead",death:{killer:"Phil Leotardo's men (Butch drove the hit)",method:"Shot",episode:"Season 6B",date:"2007"},disputed:false,bridge:false,notes:"Acting boss during Phil's convalescence. Had Gerry Torciano murdered. Killed on Phil's orders."},
+  {id:"angelo-garepe",name:"Angelo Garepe",nickname:null,family:"lupert",crew:null,role:"Consigliere",roleHistory:[{role:"Consigliere",from:"1961",to:"Oct 2004"}],status:"dead",death:{killer:"Phil Leotardo and Billy Leotardo",method:"Shot",episode:"Season 5",date:"Oct 2004"},disputed:false,bridge:false,notes:"Sided with Little Carmine in succession war. Served as prison father-figure to Tony Blundetto. Killed by Phil and Billy in retaliation for Joey Peeps' murder."},
+  {id:"jimmy-petrille",name:"Jimmy Petrille",nickname:null,family:"lupert",crew:"brooklyn-crew",role:"Consigliere / FBI Informant",roleHistory:[{role:"Capo (Brooklyn crew)",from:"1990s",to:"2004"},{role:"Consigliere",from:"Oct 2004",to:"late 2004"}],status:"alive",death:null,disputed:false,bridge:false,notes:"FBI informant. Gave 18+ years of information, bringing down Johnny Sack. The only Lupertazzi-family informant (vs. DiMeo informants)."},
+  {id:"albie-cianflone",name:"Albert Cianflone",nickname:"Albie",family:"lupert",crew:null,role:"Consigliere",roleHistory:[{role:"Consigliere",from:"2004",to:"end"}],status:"alive",death:null,disputed:false,bridge:false,notes:"Consigliere under Phil. Alive at series end."},
+  {id:"gerry-torciano",name:"Gerry Torciano",nickname:"The Hairdo",family:"lupert",crew:"leotardo-crew",role:"Capo",roleHistory:[{role:"Capo",from:"1990s",to:"2007"}],status:"dead",death:{killer:"Santoro's men",method:"Shot",episode:"Season 6B",date:"2007"},disputed:false,bridge:false,notes:"Killed by Doc Santoro's men in a power play."},
+  {id:"billy-leotardo",name:"Billy Leotardo",nickname:null,family:"lupert",crew:"leotardo-crew",role:"Soldier",roleHistory:[{role:"Soldier",from:"1990s",to:"2004"}],status:"dead",death:{killer:"Tony Blundetto",method:"Shot",episode:"Season 5",date:"Oct 2004"},disputed:false,bridge:false,notes:"Phil's brother. Killed by Tony Blundetto after Phil and Billy murdered Angelo Garepe."},
+  {id:"rusty-millio",name:"Rusty Millio",nickname:null,family:"lupert",crew:"millio-crew",role:"Capo",roleHistory:[{role:"Capo",from:"1990s",to:"Aug 2006"}],status:"dead",death:{killer:"Two Naples hitmen (sent by Tony at Johnny Sack's request)",method:"Shot",episode:"Season 6",date:"Aug 2006 (approx.)"},disputed:false,bridge:false,notes:"Johnny Sack wanted Rusty dead; Tony arranged it via the Zucca Camorra in Naples."},
+  {id:"jerry-basile",name:"Jerry Basile",nickname:null,family:"lupert",crew:null,role:"Capo (Long Island crew)",roleHistory:[{role:"Capo",from:"1990s",to:"?"}],status:"alive",death:null,disputed:false,bridge:false,notes:"Long Island crew capo. Sided with Little Carmine in the succession war."},
+  {id:"coco-cogliano",name:"Salvatore Cogliano",nickname:"Coco",family:"lupert",crew:"deconcini-crew",role:"Soldier",roleHistory:[{role:"Soldier",from:"1990s",to:"end"}],status:"alive",death:null,disputed:false,bridge:false,notes:"Harassed Meadow Soprano at a restaurant; beaten severely by Tony in retaliation — a precipitating event of the final war."},
+  {id:"fat-dom",name:"Dominic Gamiello",nickname:"Fat Dom",family:"lupert",crew:"leotardo-crew",role:"Soldier",roleHistory:[{role:"Soldier",from:"1990s",to:"2006"}],status:"dead",death:{killer:"Carlo Gervasi and Silvio Dante",method:"Stabbed and beaten",episode:"Season 6",date:"2006"},disputed:false,bridge:false,notes:"Killed by Carlo and Silvio after making crude jokes about Vito Spatafore."},
+  {id:"joey-peeps",name:"Joseph Peparelli",nickname:"Joey Peeps",family:"lupert",crew:"leotardo-crew",role:"Associate",roleHistory:[{role:"Associate",from:"1990s",to:"July 2004"}],status:"dead",death:{killer:"Tony Blundetto",method:"Shot",episode:"Season 5",date:"July 2004"},disputed:false,bridge:false,notes:"Killed by Tony Blundetto in the succession war, supporting Little Carmine's faction."},
+  {id:"lorraine-calluzzo",name:"Lorraine Calluzzo",nickname:"Lady Shylock",family:"lupert",crew:"miami-crew",role:"Associate",roleHistory:[{role:"Associate (loan shark)",from:"1990s",to:"April 2004"}],status:"dead",death:{killer:"Johnny Sack's men",method:"Shot",episode:"Season 5",date:"April 2004"},disputed:false,bridge:false,notes:"Sided with Little Carmine. Killed with Jason Evanina by Johnny Sack's side."},
+
+  // Other NY Families
+  {id:"george-paglieri",name:"George Paglieri",nickname:null,family:"other-ny",crew:null,role:"Boss (Paglieri family)",roleHistory:[{role:"Boss",from:"unknown",to:"end"}],status:"alive",death:null,disputed:false,bridge:false,notes:"Brokered the final peace sit-down in the finale that allowed Phil Leotardo's murder."},
+  {id:"don-mangano",name:"Don Mangano",nickname:null,family:"other-ny",crew:null,role:"Boss (Mangano family)",roleHistory:[{role:"Boss",from:"unknown",to:"end"}],status:"alive",death:null,disputed:false,bridge:false,notes:"Backed Tony over Junior in 1999 succession."},
+  {id:"don-teresi",name:"Don Teresi",nickname:null,family:"other-ny",crew:null,role:"Boss (Teresi family)",roleHistory:[{role:"Boss",from:"unknown",to:"end"}],status:"alive",death:null,disputed:false,bridge:false,notes:"Backed Tony over Junior in 1999 succession."},
+  {id:"andy-infante",name:"Andrew Infante",nickname:"Andy",family:"other-ny",crew:null,role:"Boss (Infante family)",roleHistory:[{role:"Boss",from:"unknown",to:"end"}],status:"alive",death:null,disputed:false,bridge:false,notes:"Johnny Sack's brother-in-law."},
+
+  // Law Enforcement
+  {id:"dwight-harris",name:"Dwight Harris",nickname:null,family:"law",crew:null,role:"Supervisory FBI Agent",roleHistory:[{role:"FBI Agent (DiMeo investigation)",from:"2001",to:"end"}],status:"alive",death:null,disputed:false,bridge:false,notes:"Lead agent on DiMeo investigation. Developed a friendly rapport with Tony. In S6, tips Tony off about Phil's planned hit — effectively aiding Tony in the final war."},
+  {id:"skip-lipari",name:"Skip Lipari",nickname:null,family:"law",crew:null,role:"FBI Agent / Handler",roleHistory:[{role:"Handler for Big Pussy Bonpensiero",from:"1997",to:"2000"}],status:"alive",death:null,disputed:false,bridge:false,notes:"Italian-American; Pussy trusted him because of their shared background."},
+  {id:"deborah-ciccerone",name:"Deborah Ciccerone",nickname:"Danielle",family:"law",crew:null,role:"FBI Undercover Agent",roleHistory:[{role:"Undercover (befriended Adriana)",from:"2002",to:"2003"}],status:"alive",death:null,disputed:false,bridge:false,notes:"Sent to befriend Adriana La Cerva. Cover blown when Christopher hit on her."},
+  {id:"robyn-sanseverino",name:"Robyn Sanseverino",nickname:null,family:"law",crew:null,role:"FBI Agent / Handler",roleHistory:[{role:"Handler (Adriana, Ray Curto)",from:"2003",to:"2006"}],status:"alive",death:null,disputed:false,bridge:false,notes:"Handler for Adriana La Cerva and Ray Curto. Curto died of a stroke in her car."},
+
+  // Civilians
+  {id:"artie-bucco",name:"Arthur Bucco",nickname:"Artie",family:"civilian",crew:null,role:"Restaurateur (Vesuvio)",roleHistory:[{role:"Civilian restaurateur",from:"1999",to:"end"}],status:"alive",death:null,disputed:false,bridge:false,notes:"Childhood friend of Tony. Ran Vesuvio / Nuovo Vesuvio. Repeatedly pulled into the mob orbit. Alive at series end."},
+  {id:"dr-melfi",name:"Jennifer Melfi",nickname:"Dr. Melfi",family:"civilian",crew:null,role:"Tony's Psychiatrist",roleHistory:[{role:"Tony's psychiatrist",from:"1999",to:"2007"}],status:"alive",death:null,disputed:false,bridge:false,notes:"Treated Tony for panic attacks and depression for most of the series. Terminated Tony as a patient in the final season after reading research suggesting therapy benefits sociopaths."},
+
+  // Genealogy people
+  {id:"tony-b-blundetto",name:"Anthony Blundetto",nickname:"Tony B.",family:"dimeo",crew:"altieri-crew",role:"Former Associate",roleHistory:[{role:"DiMeo associate",from:"1980s",to:"1992"},{role:"Imprisoned",from:"1992",to:"2004"},{role:"Associate (returned)",from:"2004",to:"2004"}],status:"dead",death:{killer:"Tony Soprano",method:"Shotgun blast",episode:"Long Term Parking (S5E12)",date:"2004"},disputed:false,bridge:true,notes:"Tony Soprano's maternal first cousin. Son of Quintina Pollio and Albert Blundetto. Also Christopher Moltisanti's paternal first cousin — the blood bridge between Tony and Chris. Tony killed him with a shotgun to spare him Phil Leotardo's torture."},
+  {id:"janice-soprano",name:"Janice Soprano",nickname:null,family:"dimeo",crew:null,role:"Tony's Sister",roleHistory:[{role:"Civilian / Peripheral",from:"1999",to:"end"}],status:"alive",death:null,disputed:false,bridge:true,notes:"Tony's older sister. Engaged to Richie Aprile (shot and killed him). Married Bobby Baccalieri (2003). Had a prior child Harpo/Hugh from an earlier relationship. Bridge: links Soprano ↔ Baccalieri."},
+  {id:"carmela-soprano",name:"Carmela Soprano",nickname:null,family:"dimeo",crew:null,role:"Tony's Wife",roleHistory:[{role:"Spouse",from:"mid-1980s",to:"end"}],status:"alive",death:null,disputed:false,bridge:true,notes:"née DeAngelis. First cousin of Dickie Moltisanti — meaning Christopher is Carmela's first cousin once removed, and Tony calls Christopher 'nephew' through this family connection. Bridge: DeAngelis ↔ Moltisanti."},
+  {id:"meadow-soprano",name:"Meadow Soprano",nickname:null,family:"civilian",crew:null,role:"Tony's Daughter",roleHistory:[{role:"Student / Lawyer",from:"1999",to:"end"}],status:"alive",death:null,disputed:false,bridge:false,notes:"Born ~1982. Briefly dated Jackie Aprile Jr. Engaged to Patrick Parisi Jr. (Patsy Parisi's son) at series end. Witnessed Tony's potential shooter in the diner just before the cut-to-black."},
+  {id:"aj-soprano",name:"Anthony Soprano Jr.",nickname:"A.J.",family:"civilian",crew:null,role:"Tony's Son",roleHistory:[{role:"Student",from:"1999",to:"end"}],status:"alive",death:null,disputed:false,bridge:false,notes:"Born ~1985–86. Struggled with depression and attempted suicide. Dating a slightly older woman at series end. Briefly considered enlisting after Army helicopter pilot opportunity."},
+  {id:"livia-soprano",name:"Livia Soprano",nickname:null,family:"civilian",crew:null,role:"Tony's Mother",roleHistory:[{role:"Matriarch",from:"start",to:"2001"}],status:"dead",death:{killer:"Natural causes / stroke",method:"Stroke before testifying against Tony",episode:"Season 3",date:"~2001"},disputed:false,bridge:false,notes:"née Pollio. Manipulative matriarch. Conspired with Junior to have Tony killed in Season 1. Died before testifying against Tony at trial. Her four Pollio sisters connect the Soprano, Blundetto families."},
+  {id:"johnny-boy-soprano",name:"Giovanni Soprano",nickname:"Johnny Boy",family:"dimeo",crew:null,role:"DiMeo Soldier / Capo",roleHistory:[{role:"Soldier/Capo",from:"1950s",to:"1986"}],status:"dead",death:{killer:"Emphysema",method:"Natural causes",episode:"Referenced",date:"October 1986"},disputed:true,bridge:false,disputeNote:"Name disputed: most sources say Giovanni, but his gravestone reads 'John Francis Soprano.'",notes:"Tony's father. Friend of Hesh Rabkin. Dickie Moltisanti was a soldier/capo in his crew and a surrogate brother to Tony."},
+  {id:"barbara-soprano",name:"Barbara Soprano",nickname:null,family:"civilian",crew:null,role:"Tony's Sister",roleHistory:[{role:"Civilian",from:"start",to:"end"}],status:"alive",death:null,disputed:false,bridge:false,notes:"Married Thomas Giglione. Children: Tommy Jr. and Alyssa. Less involved in mob life than Janice."},
+  {id:"dickie-moltisanti",name:"Richard Moltisanti",nickname:"Dickie",family:"dimeo",crew:null,role:"Soldier/Capo",roleHistory:[{role:"Soldier/Capo (Johnny Boy's crew)",from:"1960s",to:"1972"}],status:"dead",death:{killer:"Unknown hitman (ordered secretly by Junior Soprano)",method:"Murder",episode:"Referenced/Many Saints of Newark",date:"December 1972"},disputed:false,bridge:true,notes:"Christopher's father. Murdered December 1972 on Junior's secret orders — neither Tony nor Christopher ever learn the truth. Dickie was a surrogate brother to Tony and first cousin to Carmela. Bridge: Moltisanti ↔ Soprano via Carmela and via Tony B."},
+  {id:"rosalie-aprile",name:"Rosalie Aprile",nickname:null,family:"civilian",crew:null,role:"Jackie Aprile Sr.'s Wife",roleHistory:[{role:"Civilian",from:"start",to:"end"}],status:"alive",death:null,disputed:false,bridge:false,notes:"Close friend of Carmela. Widowed when Jackie Sr. died of cancer."},
+  {id:"marie-spatafore",name:"Marie Spatafore",nickname:null,family:"civilian",crew:null,role:"Vito Spatafore's Wife",roleHistory:[{role:"Civilian",from:"start",to:"end"}],status:"alive",death:null,disputed:false,bridge:true,notes:"Phil Leotardo's second cousin — the key blood/marriage link connecting the Lupertazzi family to the Aprile/Spatafore group. Phil's fury over Vito's homosexuality was intensified by this family connection."},
+  {id:"bobby-sr",name:"Robert Baccalieri Sr.",nickname:null,family:"dimeo",crew:"junior-crew",role:"DiMeo Hitman / Barber",roleHistory:[{role:"Hitman/Soldier",from:"1960s",to:"2000"}],status:"dead",death:{killer:"Natural causes / illness",method:"Died 2000",episode:"Season 3",date:"~2000"},disputed:false,bridge:false,notes:"Veteran DiMeo hitman who also worked as a barber. Father of Bobby Jr."},
+  {id:"karen-baccalieri",name:"Karen Baccalieri",nickname:null,family:"civilian",crew:null,role:"Bobby Jr.'s First Wife",roleHistory:[{role:"Spouse",from:"1990s",to:"2002"}],status:"dead",death:{killer:"Car accident",method:"Auto accident",episode:"Referenced",date:"October 2002"},disputed:false,bridge:false,notes:"Died in a car accident. Famous for her ziti, which Bobby Jr. couldn't eat until he overcame his grief. Mother of Bobby III and Sophia."},
+  {id:"kelli-moltisanti",name:"Kelli Moltisanti",nickname:null,family:"civilian",crew:null,role:"Christopher's Wife",roleHistory:[{role:"Spouse",from:"2006",to:"2007"}],status:"alive",death:null,disputed:false,bridge:false,notes:"Related to the DeAngelis line per some sources. Daughter Caitlyn born before Christopher's death. Alive at series end."},
+  {id:"liz-la-cerva",name:"Liz La Cerva",nickname:null,family:"civilian",crew:null,role:"Adriana's Mother",roleHistory:[{role:"Civilian",from:"start",to:"end"}],status:"alive",death:null,disputed:false,bridge:false,notes:"Sister of Richie Aprile and Jackie Aprile Sr. Mother of Adriana La Cerva."},
+  {id:"vito-jr",name:"Vito Spatafore Jr.",nickname:null,family:"civilian",crew:null,role:"Vito's Son",roleHistory:[{role:"Minor character",from:"Season 6",to:"Season 6"}],status:"alive",death:null,disputed:false,bridge:false,notes:"Struggled after his father's death and outing. Sent to a military-style camp at Tony's arrangement."},
+  {id:"janice-son",name:"Harpo / Hugh Baccalieri",nickname:"Harpo",family:"civilian",crew:null,role:"Janice's Son (prior relationship)",roleHistory:[],status:"alive",death:null,disputed:false,bridge:false,notes:"Janice's son from a prior relationship. Adopted by Bobby Baccalieri."},
+  {id:"domenica-baccalieri",name:"Domenica Baccalieri",nickname:"Nica",family:"civilian",crew:null,role:"Bobby & Janice's Daughter",roleHistory:[],status:"alive",death:null,disputed:false,bridge:false,notes:"Born 2005. Daughter of Bobby Baccalieri Jr. and Janice Soprano."},
+];
+
+const CONFLICTS = [
+  {id:"c1",year:"S4 (2002–03)",title:"HUD / Esplanade Dispute",between:"DiMeo ↔ Lupertazzi",detail:"Tony's Frelinghuysen Ave. property and HUD housing-redevelopment fraud. Carmine Sr. demanded a cut; Tony resisted. Carmine shut down the Esplanade via union ties. Paulie, feeling neglected while jailed, leaked scam details to Johnny Sack."},
+  {id:"c2",year:"S4 (2003)",title:"The Ginny Joke",between:"DiMeo (Ralph) ↔ Lupertazzi (Johnny Sack)",detail:"Ralph Cifaretto's cruel joke about Johnny Sack's wife Ginny's weight nearly got Ralph killed and became a major flashpoint between the families."},
+  {id:"c3",year:"S5 (2004)",title:"Lupertazzi Succession War",between:"Little Carmine ↔ Johnny Sack",detail:"After Carmine Sr.'s death: Phil & Jimmy Petrille backed Johnny; Angelo, Rusty, Jerry backed Little Carmine. Chain: Lorraine Calluzzo & Jason Evanina killed → Joey Peeps killed by Tony B. → Angelo Garepe killed by Phil & Billy → Billy Leotardo killed by Tony B. Little Carmine surrendered; Johnny installed as boss."},
+  {id:"c4",year:"S5 (2004)",title:"Tony B. / Joey Peeps Fallout",between:"DiMeo ↔ Lupertazzi",detail:"Tony Blundetto killed Joey Peeps for Little Carmine's faction. Phil & Billy killed Angelo Garepe (Tony B.'s prison father-figure). Tony B. killed Billy Leotardo and wounded Phil. Tony Soprano had to shotgun his own cousin to spare him Phil's torture — a permanent grievance."},
+  {id:"c5",year:"S6A (2006)",title:"Vito Spatafore Fallout",between:"DiMeo ↔ Lupertazzi",detail:"Vito was outed as gay; Phil had him beaten to death with pool cues before Tony could resolve it internally. Tony retaliated by bombing Phil's Sheepshead Bay wire room. Carlo and Silvio killed Fat Dom Gamiello."},
+  {id:"c6",year:"S6B (2007)",title:"Final Leotardo–Soprano War",between:"DiMeo ↔ Lupertazzi",detail:"After Phil became boss and rejected compromise (Coco beat over Meadow), Phil ordered hits on Tony, Silvio, and Bobby. Bobby killed. Silvio left comatose. Burt Gervasi garroted for defecting. Peace brokered by Little Carmine & George Paglieri. DeConcini/Cianflone allowed Tony to kill Phil. Phil shot by Walden Belfiore; head crushed by his own SUV."},
+];
+
+// ─────────────────────────────────────────────
+// LOOKUP
+// ─────────────────────────────────────────────
+const nodeMap = {};
+NODES.forEach(n => nodeMap[n.id] = n);
+
+// ─────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────
+let activeView = 'org';
+let visibleFamilies = new Set(['dimeo','lupert','other','law']);
+let statusFilter = null; // 'dead' | 'informant' | null
+let conflictsVisible = false;
+let currentDetail = null;
+let searchQuery = '';
+
+// ─────────────────────────────────────────────
+// VIEW SWITCH
+// ─────────────────────────────────────────────
+function switchView(v) {
+  activeView = v;
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  document.getElementById(v+'-view').classList.add('active');
+  document.querySelectorAll('.tab')[v==='org'?0:1].classList.add('active');
+  if(v==='gen' && !document.getElementById('gen-canvas').children.length) renderGen();
+}
+
+// ─────────────────────────────────────────────
+// FILTER
+// ─────────────────────────────────────────────
+function toggleFilter(family, btn) {
+  btn.classList.toggle('active');
+  if(visibleFamilies.has(family)) visibleFamilies.delete(family);
+  else visibleFamilies.add(family);
+  applyFilters();
+}
+function toggleStatusFilter(status, btn) {
+  btn.classList.toggle('active');
+  if(statusFilter === status) statusFilter = null;
+  else statusFilter = status;
+  applyFilters();
+}
+function applyFilters() {
+  document.querySelectorAll('.node').forEach(el => {
+    const fam = el.dataset.family;
+    const status = el.dataset.status;
+    let show = true;
+    if(fam === 'dimeo' && !visibleFamilies.has('dimeo')) show = false;
+    if(fam === 'lupert' && !visibleFamilies.has('lupert')) show = false;
+    if((fam === 'other-ny') && !visibleFamilies.has('other')) show = false;
+    if(fam === 'law' && !visibleFamilies.has('law')) show = false;
+    if(statusFilter === 'dead' && status !== 'dead') show = false;
+    if(statusFilter === 'informant' && status !== 'informant') show = false;
+    el.style.display = show ? '' : 'none';
+  });
+}
+function toggleConflicts(btn) {
+  conflictsVisible = !conflictsVisible;
+  btn.classList.toggle('active', conflictsVisible);
+  const layer = document.getElementById('conflict-section');
+  if(layer) layer.style.display = conflictsVisible ? 'block' : 'none';
+}
+function handleSearch(q) {
+  searchQuery = q.toLowerCase().trim();
+  document.querySelectorAll('.node').forEach(el => {
+    const name = (el.dataset.name||'').toLowerCase();
+    const nick = (el.dataset.nick||'').toLowerCase();
+    if(!searchQuery) {
+      el.classList.remove('dimmed');
+    } else {
+      const match = name.includes(searchQuery) || nick.includes(searchQuery);
+      el.classList.toggle('dimmed', !match);
+    }
+  });
+}
+function resetView() {
+  document.getElementById('search-input').value = '';
+  searchQuery = '';
+  document.querySelectorAll('.node').forEach(el => el.classList.remove('dimmed'));
+}
+
+// ─────────────────────────────────────────────
+// NODE RENDER HELPER
+// ─────────────────────────────────────────────
+function getInfoStatus(node) {
+  // informant detection
+  const informants = ['big-pussy','jimmy-altieri','ray-curto','eugene-pontecorvo','carlo-gervasi','adriana','jimmy-petrille','febby-petrulio','larry-barese'];
+  return informants.includes(node.id) ? 'informant' : node.status;
+}
+
+function renderNode(node, extraClass='') {
+  const status = getInfoStatus(node);
+  const isInformant = status === 'informant';
+  const classes = [
+    'node',
+    node.family.replace('-','_').replace('other_ny','other-ny'),
+    status,
+    node.disputed ? 'disputed' : '',
+    node.bridge ? 'bridge-node' : '',
+    extraClass
+  ].filter(Boolean).join(' ');
+
+  const badges = [];
+  if(isInformant) badges.push('<span class="badge rat">RAT</span>');
+  if(node.status==='imprisoned') badges.push('<span class="badge prison">▪ IN</span>');
+  if(node.status==='comatose') badges.push('<span class="badge coma">COM</span>');
+  if(node.status==='dead') badges.push('<span class="badge dead">†</span>');
+  if(node.disputed) badges.push('<span class="badge disputed">?</span>');
+
+  return `<div class="node ${classes}" data-id="${node.id}" data-family="${node.family}" data-status="${status}" data-name="${node.name}" data-nick="${node.nickname||''}" onclick="showDetail('${node.id}')" onmouseenter="showTooltip(event,'${node.id}')" onmouseleave="hideTooltip()">
+    <div class="node-name">${node.name}</div>
+    ${node.nickname ? `<div class="node-nick">"${node.nickname}"</div>` : ''}
+    <div class="node-role">${node.roleHistory.length ? node.roleHistory[node.roleHistory.length-1].role : node.role}</div>
+    ${badges.length ? `<div class="node-badges">${badges.join('')}</div>` : ''}
+  </div>`;
+}
+
+// ─────────────────────────────────────────────
+// DETAIL PANEL
+// ─────────────────────────────────────────────
+function showDetail(id) {
+  const node = nodeMap[id];
+  if(!node) return;
+  const status = getInfoStatus(node);
+  const familyColors = {dimeo:'var(--dimeo)',lupert:'var(--lupert)','other-ny':'var(--other-ny)',law:'var(--law)',civilian:'var(--civilian)'};
+  const fc = familyColors[node.family] || 'var(--civilian)';
+  
+  let roleHistoryHTML = node.roleHistory.map(r => 
+    `<div class="dp-role-item"><span class="dates">${r.from}${r.to ? ' – '+r.to : ''}</span><span class="role">${r.role}</span></div>`
+  ).join('');
+  
+  let deathHTML = '';
+  if(node.death) {
+    deathHTML = `<div class="dp-death"><div class="death-label">Cause of Death</div><div class="death-detail">
+      <strong>Killed by:</strong> ${node.death.killer}<br>
+      <strong>Method:</strong> ${node.death.method}<br>
+      <strong>Episode:</strong> ${node.death.episode}<br>
+      ${node.death.date ? `<strong>Date:</strong> ${node.death.date}` : ''}
+    </div></div>`;
+  }
+  
+  let disputeHTML = '';
+  if(node.disputed && node.disputeNote) {
+    disputeHTML = `<div class="dp-dispute"><p>⚠ ${node.disputeNote}</p></div>`;
+  }
+
+  const html = `
+    <div class="dp-family-stripe" style="background:${fc}"></div>
+    <div class="dp-name">${node.name}</div>
+    ${node.nickname ? `<div class="dp-nick">"${node.nickname}"</div>` : ''}
+    <div class="dp-section">
+      <div class="dp-status ${status}">${status.toUpperCase()}</div>
+    </div>
+    ${roleHistoryHTML ? `<div class="dp-section"><div class="dp-label">Role History</div><div class="dp-role-history">${roleHistoryHTML}</div></div>` : ''}
+    ${deathHTML ? `<div class="dp-section"><div class="dp-label">Death</div>${deathHTML}</div>` : ''}
+    ${node.notes ? `<div class="dp-section"><div class="dp-label">Notes</div><div class="dp-notes">${node.notes}</div></div>` : ''}
+    ${disputeHTML ? `<div class="dp-section"><div class="dp-label">Disputed / Ambiguous</div>${disputeHTML}</div>` : ''}
+    <div class="dp-section"><div class="dp-value mono">Family: ${node.family} | ID: ${node.id}</div></div>
+  `;
+
+  const panelId = activeView === 'org' ? 'org-detail' : 'gen-detail';
+  const contentId = activeView === 'org' ? 'org-detail-content' : 'gen-detail-content';
+  document.getElementById(contentId).innerHTML = html;
+  var dp = document.getElementById(panelId); dp.style.display=''; dp.classList.remove('hidden');
+}
+function closeDetail(id) {
+  document.getElementById(id).classList.add('hidden');
+}
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape') {
+    closeDetail('org-detail');
+    closeDetail('gen-detail');
+  }
+});
+
+// ─────────────────────────────────────────────
+// TOOLTIP
+// ─────────────────────────────────────────────
+const tooltip = document.getElementById('tooltip');
+function showTooltip(e, id) {
+  const node = nodeMap[id];
+  if(!node) return;
+  const status = getInfoStatus(node);
+  tooltip.querySelector('.tt-name').textContent = node.name + (node.nickname ? ` "${node.nickname}"` : '');
+  tooltip.querySelector('.tt-role').textContent = node.role;
+  tooltip.querySelector('.tt-status').textContent = status.toUpperCase();
+  tooltip.style.display = 'block';
+  moveTooltip(e);
+}
+function moveTooltip(e) {
+  tooltip.style.left = (e.clientX + 12) + 'px';
+  tooltip.style.top = (e.clientY - 10) + 'px';
+}
+function hideTooltip() {
+  tooltip.style.display = 'none';
+}
+document.addEventListener('mousemove', e => {
+  if(tooltip.style.display === 'block') moveTooltip(e);
+});
+
+// ─────────────────────────────────────────────
+// CREW COLLAPSE
+// ─────────────────────────────────────────────
+function toggleCrew(btn) {
+  const members = btn.closest('.crew-block').querySelector('.crew-members');
+  members.classList.toggle('collapsed');
+  const tog = btn.querySelector('.crew-toggle');
+  tog.classList.toggle('collapsed');
+}
+
+// ─────────────────────────────────────────────
+// RENDER ORG
+// ─────────────────────────────────────────────
+function renderOrg() {
+  const canvas = document.getElementById('org-canvas');
+  
+  // Helper to get node or create minimal placeholder
+  const n = id => nodeMap[id];
+
+  // ── DIMEO SUCCESSION
+  const dimeoSuccession = [
+    {name:'Alfano', dates:'1900s–~1950s', role:'Founder'},
+    {name:'Ercole DiMeo', dates:'~1950s–1995', role:'Boss (imprisoned 1995)'},
+    {name:'Jackie Aprile Sr.', dates:'1995–1998', role:'Acting Boss'},
+    {name:'Junior Soprano', dates:'1999–2006', role:'Official Boss (figurehead)'},
+    {name:'Tony Soprano', dates:'1999–end', role:'De facto / Full Boss'},
+  ];
+
+  // ── LUPERTAZZI SUCCESSION
+  const luptSuccession = [
+    {name:'Giovanni Lupertazzi', dates:'1933–~1950s', role:'Founder'},
+    {name:'Carmine Sr.', dates:'~1950s–2004', role:'Boss'},
+    {name:'Johnny Sack', dates:'2004–2006', role:'Boss (imprisoned)'},
+    {name:'Phil Leotardo', dates:'2004–2007', role:'Acting/Full Boss'},
+    {name:'DeConcini (likely)', dates:'2007–?', role:'Successor (disputed)'},
+  ];
+
+  function succStrip(items) {
+    return items.map((item,i) => `
+      <div class="succ-item">
+        <div class="succ-box">
+          <span class="s-role">${item.role}</span>
+          <span class="s-name">${item.name}</span>
+          <span class="s-dates">${item.dates}</span>
+        </div>
+        ${i < items.length-1 ? '<span class="succ-arrow">→</span>' : ''}
+      </div>
+    `).join('');
+  }
+
+  function crewBlock(title, capos, members, defunct=false) {
+    const defTag = defunct ? `<span class="badge defunct">DEFUNCT</span>` : '';
+    const membersHTML = members.map(m => {
+      const node = typeof m === 'string' ? n(m) : m;
+      if(!node) return '';
+      return renderNode(node);
+    }).filter(Boolean).join('');
+    return `
+      <div class="crew-block" style="${defunct?'opacity:0.5':''}" >
+        <div class="crew-header" onclick="toggleCrew(this)">
+          <span>${title} ${defTag}</span>
+          <span class="crew-toggle">▾</span>
+        </div>
+        ${capos.map(cid => {
+          const cn = n(cid);
+          return cn ? renderNode(cn,'') : '';
+        }).join('')}
+        <div class="crew-members" style="margin-top:6px">
+          ${membersHTML}
+        </div>
+      </div>`;
+  }
+
+  const conflictSection = `
+    <div id="conflict-section" style="display:none;margin-bottom:24px">
+      <div class="defunct-title" style="font-family:'Libre Baskerville',serif;font-size:13px;color:var(--text);margin-bottom:10px">Inter-Family Conflicts</div>
+      ${CONFLICTS.map(c => `
+        <div class="conflict-bar" onclick="showConflictDetail('${c.id}')">
+          <div class="conflict-year">${c.year}</div>
+          <div class="conflict-title">${c.title}</div>
+          <div class="conflict-between">${c.between}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  canvas.innerHTML = `
+    ${conflictSection}
+
+    <!-- DIMEO FAMILY -->
+    <div class="family-section">
+      <div class="family-header">
+        <div class="family-title" style="color:var(--dimeo)">DiMeo / Soprano Crime Family</div>
+        <div class="family-badge" style="color:var(--dimeo);border-color:var(--dimeo)">North Jersey</div>
+      </div>
+      <div class="succession-strip">${succStrip(dimeoSuccession)}</div>
+      <div class="org-tree">
+        <!-- Boss row -->
+        <div class="rank-row">
+          <div class="rank-label">Boss</div>
+          <div class="rank-nodes">
+            ${renderNode(n('tony-soprano'))}
+            ${renderNode(n('junior-soprano'))}
+            ${renderNode(n('ercole-dimeo'))}
+          </div>
+        </div>
+        <!-- Admin -->
+        <div class="rank-row">
+          <div class="rank-label">Administration</div>
+          <div class="rank-nodes">
+            ${renderNode(n('silvio-dante'))}
+            ${renderNode(n('bobby-baccalieri'))}
+            ${renderNode(n('beppy-sasso'))}
+            ${renderNode(n('mikey-palmice'))}
+          </div>
+        </div>
+        <!-- Capos / Crews -->
+        <div class="rank-row">
+          <div class="rank-label">Crews</div>
+          <div class="rank-nodes" style="flex-wrap:wrap">
+            ${crewBlock('Tony/Gualtieri Crew', ['paulie-gualtieri','christopher-moltisanti'], ['silvio-dante','big-pussy','furio-giunta','burt-gervasi','patsy-parisi','benny-fazio','little-paulie','walden-belfiore','matthew-bevilaqua','sean-gismonte','brendan-filone','hesh-rabkin'])}
+            ${crewBlock('Aprile Crew', ['carlo-gervasi'], ['richie-aprile','gigi-cestone','ralph-cifaretto','vito-spatafore','eugene-pontecorvo','jackie-aprile-jr'])}
+            ${crewBlock('Barese Crew', ['larry-barese','albert-barese'], [])}
+            ${crewBlock('Altieri Crew (defunct)', ['jimmy-altieri'], ['walden-belfiore','tony-b-blundetto'], true)}
+            ${crewBlock('Junior Crew (defunct)', ['junior-soprano','philly-parisi'], ['beppy-sasso','mikey-palmice','bobby-baccalieri','bobby-sr'], true)}
+            ${crewBlock('La Manna Crew (defunct)', ['feech-la-manna'], [], true)}
+            ${crewBlock('Curto Crew (defunct)', ['ray-curto'], [], true)}
+          </div>
+        </div>
+        <!-- Informants summary -->
+        <div class="defunct-section" style="margin-top:8px">
+          <div class="defunct-title">DiMeo Informants (Rats)</div>
+          <div class="defunct-grid">
+            ${['big-pussy','jimmy-altieri','ray-curto','eugene-pontecorvo','carlo-gervasi','adriana','febby-petrulio'].map(id => {
+              const node = n(id);
+              return `<div class="defunct-crew" onclick="showDetail('${id}')" style="cursor:pointer">
+                <div class="dc-name" style="color:var(--informant)">${node.name}</div>
+                <div class="dc-members">${node.roleHistory.length ? node.roleHistory[node.roleHistory.length-1].role : node.role}</div>
+              </div>`;
+            }).join('')}
+          </div>
+        </div>
+        <!-- Non-mob associates -->
+        <div class="defunct-section" style="margin-top:8px">
+          <div class="defunct-title">Associates & Civilians</div>
+          <div class="defunct-grid">
+            ${['hesh-rabkin','artie-bucco','dr-melfi','adriana'].map(id => {
+              const node = n(id);
+              return renderNode(node);
+            }).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LUPERTAZZI FAMILY -->
+    <div class="family-section">
+      <div class="family-header">
+        <div class="family-title" style="color:var(--lupert)">Lupertazzi Crime Family</div>
+        <div class="family-badge" style="color:var(--lupert);border-color:var(--lupert)">New York — Primary Antagonist</div>
+      </div>
+      <div class="succession-strip">${succStrip(luptSuccession)}</div>
+      <div class="org-tree">
+        <div class="rank-row">
+          <div class="rank-label">Boss</div>
+          <div class="rank-nodes">
+            ${renderNode(n('carmine-sr'))}
+            ${renderNode(n('johnny-sack'))}
+            ${renderNode(n('phil-leotardo'))}
+            ${renderNode(n('doc-santoro'))}
+          </div>
+        </div>
+        <div class="rank-row">
+          <div class="rank-label">Administration</div>
+          <div class="rank-nodes">
+            ${renderNode(n('butch-deconcini'))}
+            ${renderNode(n('albie-cianflone'))}
+            ${renderNode(n('angelo-garepe'))}
+            ${renderNode(n('jimmy-petrille'))}
+          </div>
+        </div>
+        <div class="rank-row">
+          <div class="rank-label">Crews</div>
+          <div class="rank-nodes" style="flex-wrap:wrap">
+            ${crewBlock('Leotardo Crew', ['phil-leotardo'], ['gerry-torciano','billy-leotardo','fat-dom','joey-peeps'])}
+            ${crewBlock('DeConcini Crew', ['butch-deconcini'], ['coco-cogliano'])}
+            ${crewBlock('Miami Crew (Little Carmine)', ['little-carmine'], ['lorraine-calluzzo'])}
+            ${crewBlock('Millio Crew', ['rusty-millio'], [])}
+            ${crewBlock('Brooklyn Crew', ['jimmy-petrille'], [])}
+            ${crewBlock('Long Island Crew', ['jerry-basile'], [])}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OTHER NY -->
+    <div class="family-section">
+      <div class="family-header">
+        <div class="family-title" style="color:var(--other-ny)">Other New York Families</div>
+        <div class="family-badge" style="color:var(--other-ny);border-color:var(--other-ny)">Commission Members</div>
+      </div>
+      <div class="other-ny-section">
+        <div class="other-ny-grid">
+          <div class="ny-family">${renderNode(n('george-paglieri'))}<div class="ny-fmembers">Brokered final peace</div></div>
+          <div class="ny-family">${renderNode(n('don-mangano'))}<div class="ny-fmembers">Backed Tony vs. Junior (1999)</div></div>
+          <div class="ny-family">${renderNode(n('don-teresi'))}<div class="ny-fmembers">Backed Tony vs. Junior (1999)</div></div>
+          <div class="ny-family">${renderNode(n('andy-infante'))}<div class="ny-fmembers">Johnny Sack's brother-in-law</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LAW ENFORCEMENT -->
+    <div class="family-section">
+      <div class="family-header">
+        <div class="family-title" style="color:var(--law)">Law Enforcement</div>
+        <div class="family-badge" style="color:var(--law);border-color:var(--law)">FBI</div>
+      </div>
+      <div class="rank-nodes" style="display:flex;gap:8px;flex-wrap:wrap">
+        ${['dwight-harris','skip-lipari','deborah-ciccerone','robyn-sanseverino'].map(id => renderNode(n(id))).join('')}
+      </div>
+    </div>
+  `;
+}
+
+// ─────────────────────────────────────────────
+// CONFLICT DETAIL
+// ─────────────────────────────────────────────
+function showConflictDetail(id) {
+  const c = CONFLICTS.find(x => x.id === id);
+  if(!c) return;
+  const panelId = 'org-detail';
+  const contentId = 'org-detail-content';
+  document.getElementById(contentId).innerHTML = `
+    <div class="dp-family-stripe" style="background:#5a3a3a"></div>
+    <div class="dp-name">${c.title}</div>
+    <div class="dp-section"><div class="dp-status" style="border-color:var(--lupert);color:var(--lupert)">${c.between}</div></div>
+    <div class="dp-section"><div class="dp-label">Timeline</div><div class="dp-value mono">${c.year}</div></div>
+    <div class="dp-section"><div class="dp-label">Details</div><div class="dp-notes">${c.detail}</div></div>
+  `;
+  var dp = document.getElementById(panelId); dp.style.display=''; dp.classList.remove('hidden');
+}
+
+// ─────────────────────────────────────────────
+// RENDER GENEALOGY
+// ─────────────────────────────────────────────
+function renderGen() {
+  const canvas = document.getElementById('gen-canvas');
+
+  function smallNode(id) {
+    const node = nodeMap[id];
+    if(!node) return `<div class="node civilian" style="min-width:120px"><div class="node-name">${id}</div></div>`;
+    return renderNode(node);
+  }
+
+  function couple(p1id, p2id, relationType, childIds) {
+    const lineClass = relationType === 'romantic' ? 'dashed-line' : 'spouse-line';
+    const childrenHTML = childIds.length ? `
+      <div class="couple-children">
+        <div class="couple-children-label">Children</div>
+        <div class="children-row">${childIds.map(smallNode).join('')}</div>
+      </div>` : '';
+    return `<div class="couple">
+      <div class="couple-nodes">
+        ${smallNode(p1id)}
+        <div class="${lineClass}"></div>
+        ${smallNode(p2id)}
+      </div>
+      ${childrenHTML}
+    </div>`;
+  }
+
+  canvas.innerHTML = `
+    <div class="gen-group">
+      <div class="gen-group-title">Soprano / Pollio / Blundetto / Moltisanti — The Core Interlock</div>
+      <div class="generation">
+        <div style="margin-bottom:12px">
+          <div class="dp-label" style="margin-bottom:6px">Grandparents</div>
+          ${couple('corrado-soprano-sr','mariangela-soprano','spouse',['junior-soprano','johnny-boy-soprano'])}
+        </div>
+        <div style="margin-bottom:12px">
+          <div class="dp-label" style="margin-bottom:6px">Johnny Boy's Line</div>
+          ${couple('johnny-boy-soprano','livia-soprano','spouse',['tony-soprano','janice-soprano','barbara-soprano'])}
+        </div>
+        <div style="margin-bottom:12px">
+          <div class="dp-label" style="margin-bottom:6px">Tony & Carmela</div>
+          ${couple('tony-soprano','carmela-soprano','spouse',['meadow-soprano','aj-soprano'])}
+        </div>
+        <div style="margin-bottom:12px">
+          <div class="dp-label" style="margin-bottom:6px">Blundetto Line (via Quintina Pollio — Livia's sister)</div>
+          ${couple('albert-blundetto','quintina-pollio','spouse',['tony-b-blundetto'])}
+        </div>
+        <div style="margin-bottom:12px">
+          <div class="dp-label" style="margin-bottom:6px">Tony B.'s Family</div>
+          ${couple('tony-b-blundetto','nancy-blundetto','spouse',['justin-blundetto','kelly-blundetto'])}
+        </div>
+        <div style="margin-bottom:12px">
+          <div class="dp-label" style="margin-bottom:6px">Moltisanti Line (Joanne Blundetto = Tony B.'s sister)</div>
+          ${couple('dickie-moltisanti','joanne-blundetto','spouse',['christopher-moltisanti'])}
+        </div>
+        <div style="margin-bottom:12px">
+          <div class="dp-label" style="margin-bottom:6px">Christopher's Family</div>
+          ${couple('christopher-moltisanti','kelli-moltisanti','spouse',['caitlyn-moltisanti'])}
+        </div>
+        <div style="margin-bottom:6px">
+          <div class="dp-label" style="margin-bottom:4px">Romantic (no marriage/children)</div>
+          ${couple('christopher-moltisanti','adriana','romantic',[])}
+        </div>
+      </div>
+    </div>
+
+    <div class="gen-group">
+      <div class="gen-group-title">Janice Soprano / Baccalieri</div>
+      <div class="generation">
+        <div style="margin-bottom:12px">
+          <div class="dp-label" style="margin-bottom:6px">Bobby Baccalieri Sr.</div>
+          ${smallNode('bobby-sr')}
+        </div>
+        <div style="margin-bottom:12px">
+          <div class="dp-label" style="margin-bottom:6px">Bobby Jr.'s First Marriage</div>
+          ${couple('bobby-baccalieri','karen-baccalieri','spouse',['bobby-baccalieri-iii','sophia-baccalieri'])}
+        </div>
+        <div style="margin-bottom:12px">
+          <div class="dp-label" style="margin-bottom:6px">Bobby Jr. + Janice (2003) — Bridge: Soprano ↔ Baccalieri</div>
+          ${couple('bobby-baccalieri','janice-soprano','spouse',['domenica-baccalieri','janice-son'])}
+        </div>
+        <div style="margin-bottom:6px">
+          <div class="dp-label" style="margin-bottom:4px">Romantic (no marriage)</div>
+          ${couple('richie-aprile','janice-soprano','romantic',[])}
+        </div>
+      </div>
+    </div>
+
+    <div class="gen-group">
+      <div class="gen-group-title">Aprile / La Cerva / Spatafore Cluster</div>
+      <div class="generation">
+        <div style="margin-bottom:12px">
+          <div class="dp-label" style="margin-bottom:6px">Aprile Siblings</div>
+          <div class="children-row">${['jackie-aprile-sr','richie-aprile','liz-la-cerva'].map(smallNode).join('')}</div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div class="dp-label" style="margin-bottom:6px">Jackie Sr.'s Family</div>
+          ${couple('jackie-aprile-sr','rosalie-aprile','spouse',['jackie-aprile-jr'])}
+        </div>
+        <div style="margin-bottom:12px">
+          <div class="dp-label" style="margin-bottom:6px">Liz La Cerva → Adriana</div>
+          ${smallNode('liz-la-cerva')} → ${smallNode('adriana')}
+        </div>
+        <div style="margin-bottom:12px">
+          <div class="dp-label" style="margin-bottom:6px">Unnamed Spatafore Sister → Vito & Bryan</div>
+          <div class="children-row">${smallNode('vito-spatafore')}${smallNode('vito-jr')}</div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div class="dp-label" style="margin-bottom:6px">Vito ↔ Marie (Bridge: Phil Leotardo's 2nd cousin)</div>
+          ${couple('vito-spatafore','marie-spatafore','spouse',['vito-jr'])}
+        </div>
+        <div style="margin-bottom:6px">
+          <div class="dp-label" style="margin-bottom:4px">Romantic (no marriage)</div>
+          ${couple('jackie-aprile-jr','meadow-soprano','romantic',[])}
+        </div>
+      </div>
+    </div>
+
+    <div class="gen-group">
+      <div class="gen-group-title">DeAngelis Family (Carmela's Side)</div>
+      <div class="generation">
+        <div style="margin-bottom:12px">
+          <div class="dp-label" style="margin-bottom:6px">Orazio DeAngelis line → Hugh DeAngelis → Carmela</div>
+          ${couple('hugh-deangelis','mary-pellegrino','spouse',['carmela-soprano'])}
+        </div>
+        <div style="margin-bottom:6px">
+          <div class="dp-label" style="margin-bottom:4px">Note: Carmela is first cousin of Dickie Moltisanti — creates the Tony ↔ Christopher "nephew" relationship</div>
+          <div class="node civilian" style="min-width:220px;padding:8px 12px;border-left:3px solid var(--accent)">
+            <div class="node-role" style="color:var(--accent)">Cross-tree bridge note</div>
+            <div class="dp-notes" style="margin-top:4px">Carmela DeAngelis = Dickie Moltisanti's first cousin → Christopher is Carmela's first cousin once removed → Tony calls Christopher "nephew" and "blood," but they are NOT direct blood relations. The bridges run through (1) Carmela ↔ Dickie and (2) Tony B. Blundetto.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="gen-group" style="border-color:#5a3a3a">
+      <div class="gen-group-title" style="color:var(--lupert)">Leotardo ↔ Spatafore/Aprile Bridge (NY ↔ NJ)</div>
+      <div class="generation">
+        <div style="margin-bottom:8px">
+          <div class="dp-label" style="margin-bottom:6px">Phil Leotardo is Marie Spatafore's 2nd cousin — key NY/NJ blood link</div>
+          <div class="children-row">${smallNode('phil-leotardo')}${smallNode('marie-spatafore')}${smallNode('vito-spatafore')}</div>
+        </div>
+        <div class="node" style="border-left:3px solid var(--lupert);padding:8px 12px;margin-top:8px">
+          <div class="node-role" style="color:var(--lupert)">Significance</div>
+          <div class="dp-notes" style="margin-top:4px">Phil's rage over Vito's homosexuality was intensified by this family connection. Phil had Vito beaten to death with pool cues before Tony could resolve it — directly triggering the final Leotardo–Soprano war.</div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Inject placeholder nodes for people not in NODES
+  const placeholders = {
+    'corrado-soprano-sr': {id:'corrado-soprano-sr',name:'Corrado Soprano Sr.',nickname:null,family:'dimeo',role:'Paternal Grandfather',roleHistory:[],status:'dead',death:null,disputed:false,bridge:false,notes:'Tony\'s paternal grandfather. m. Mariangela (née D\'Agostino).'},
+    'mariangela-soprano': {id:'mariangela-soprano',name:'Mariangela Soprano',nickname:null,family:'civilian',role:'Grandmother',roleHistory:[],status:'dead',death:null,disputed:false,bridge:false,notes:'née D\'Agostino. Tony\'s paternal grandmother.'},
+    'quintina-pollio': {id:'quintina-pollio',name:'Quintina Pollio',nickname:'Quinta',family:'civilian',role:"Livia's Sister / Tony B.'s Mother",roleHistory:[],status:'dead',death:null,disputed:false,bridge:true,notes:"One of four Pollio sisters. m. Albert Blundetto. Mother of Tony B."},
+    'albert-blundetto': {id:'albert-blundetto',name:'Albert Blundetto',nickname:null,family:'dimeo',role:"Tony B.'s Father",roleHistory:[],status:'dead',death:null,disputed:false,bridge:false,notes:"m. Quintina Pollio. Father of Tony B. Blundetto."},
+    'joanne-blundetto': {id:'joanne-blundetto',name:'Joanne Blundetto',nickname:null,family:'civilian',role:'Christopher\'s Mother',roleHistory:[],status:'alive',death:null,disputed:false,bridge:true,notes:"Tony B.'s sister. m. Dickie Moltisanti. Mother of Christopher. The blood bridge between the Blundetto and Moltisanti lines."},
+    'nancy-blundetto': {id:'nancy-blundetto',name:'Nancy Blundetto',nickname:null,family:'civilian',role:"Tony B.'s Ex-Wife",roleHistory:[],status:'alive',death:null,disputed:false,bridge:false,notes:"Mother of Justin, Jason (twins), and Kelly Blundetto."},
+    'justin-blundetto': {id:'justin-blundetto',name:'Justin Blundetto',nickname:null,family:'civilian',role:'Tony B.\'s Son',roleHistory:[],status:'alive',death:null,disputed:false,bridge:false,notes:'Twin son of Tony B.'},
+    'kelly-blundetto': {id:'kelly-blundetto',name:'Kelly Blundetto',nickname:null,family:'civilian',role:"Tony B.'s Daughter",roleHistory:[],status:'alive',death:null,disputed:false,bridge:false,notes:'Daughter of Tony B.'},
+    'caitlyn-moltisanti': {id:'caitlyn-moltisanti',name:'Caitlyn Moltisanti',nickname:null,family:'civilian',role:"Christopher's Daughter",roleHistory:[],status:'alive',death:null,disputed:false,bridge:false,notes:"Born before Christopher's death. Lives with mother Kelli."},
+    'bobby-baccalieri-iii': {id:'bobby-baccalieri-iii',name:'Bobby Baccalieri III',nickname:null,family:'civilian',role:"Bobby Jr.'s Son",roleHistory:[],status:'alive',death:null,disputed:false,bridge:false,notes:"Son of Bobby Jr. and Karen. Left without a father after Dec 2007."},
+    'sophia-baccalieri': {id:'sophia-baccalieri',name:'Sophia Baccalieri',nickname:null,family:'civilian',role:"Bobby Jr.'s Daughter",roleHistory:[],status:'alive',death:null,disputed:false,bridge:false,notes:"Daughter of Bobby Jr. and Karen."},
+    'hugh-deangelis': {id:'hugh-deangelis',name:'Hugo DeAngelis',nickname:'Hugh',family:'civilian',role:"Carmela's Father",roleHistory:[],status:'alive',death:null,disputed:false,bridge:false,notes:'m. Mary Pellegrino. Father of Carmela.'},
+    'mary-pellegrino': {id:'mary-pellegrino',name:'Mary DeAngelis',nickname:null,family:'civilian',role:"Carmela's Mother",roleHistory:[],status:'alive',death:null,disputed:false,bridge:false,notes:'née Pellegrino. Mother of Carmela.'},
+  };
+  Object.assign(nodeMap, placeholders);
+  // Re-render after injecting placeholders (nodes referenced but missing)
+  canvas.querySelectorAll('[data-id]').forEach(el => {
+    // already rendered; just ensure hover/click work
+  });
+}
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+renderOrg();
+
+function toggleLegend() {
+  document.getElementById('legend').classList.toggle('collapsed');
+}
+</script>
+</body>
+</html>
